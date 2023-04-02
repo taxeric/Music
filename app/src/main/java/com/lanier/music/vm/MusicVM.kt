@@ -18,6 +18,14 @@ class MusicVM (private val environment: MusicEnvironment): ViewModel() {
     private val _state = MutableStateFlow(MusicState())
     val state = _state.asStateFlow()
 
+    init {
+        viewModelScope.launch {
+            environment.getPlayingState().collect {
+                _state.emit(_state.value.copy(isPlaying = it))
+            }
+        }
+    }
+
     fun dispatch(action: MusicAction) {
         when (action) {
             MusicAction.Pause -> {

@@ -3,11 +3,15 @@ package com.lanier.music.page
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.lanier.music.R
 import com.lanier.music.entity.LocalMusicState
 import com.lanier.music.entity.LocalSongController
 import com.lanier.music.entity.Song
@@ -54,13 +58,23 @@ private fun MainPage() {
     }
     Column {
         Text(text = innerPath)
-        Spacer(modifier = Modifier
-            .fillMaxWidth()
-            .height(12.dp))
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(12.dp)
+        )
         CurPlay()
-        Spacer(modifier = Modifier
-            .fillMaxWidth()
-            .height(12.dp))
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(12.dp)
+        )
+        ControllerView()
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(12.dp)
+        )
         LazyColumn {
             items(musicList.size) {
                 MusicItem(song = musicList[it]) { result ->
@@ -95,7 +109,36 @@ private fun MusicItem(
 private fun CurPlay() {
     val musicState = LocalMusicState.current
     Column() {
-        Text(text = "cur >> ${musicState.curPlaySong}")
+        Text(text = "cur >> ${musicState.curPlaySong.name}")
         Text(text = "size >> ${musicState.songs.size}")
+    }
+}
+
+@Composable
+private fun ControllerView() {
+    val songController = LocalSongController.current
+    val musicState = LocalMusicState.current
+    val isPlaying = musicState.isPlaying
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        IconButton(
+            onClick = {
+                if (isPlaying) {
+                    songController?.pause()
+                } else {
+                    songController?.resume()
+                }
+            }
+        ) {
+            Icon(
+                painter = painterResource(
+                    id = if (isPlaying) R.drawable.baseline_pause_24
+                    else R.drawable.baseline_play_arrow_24
+                ),
+                contentDescription = ""
+            )
+        }
     }
 }
