@@ -21,6 +21,9 @@ class MusicEnvironment constructor(
     private val _isPlaying = MutableStateFlow(false)
     private val isPlaying: StateFlow<Boolean> = _isPlaying
 
+    private val _duration = MutableStateFlow(0L)
+    private val duration: StateFlow<Long> =_duration
+
     private val _hasStopped = MutableStateFlow(false)
     private val hasStopped: StateFlow<Boolean> = _hasStopped
 
@@ -72,6 +75,12 @@ class MusicEnvironment constructor(
         exoPlayer.play()
         _curPlay.tryEmit(song)
         _hasStopped.tryEmit(false)
+        val duration = if (exoPlayer.duration != -1L) {
+            exoPlayer.currentPosition
+        } else {
+            0L
+        }
+        _duration.tryEmit(duration)
     }
 
     fun pause() {
@@ -91,7 +100,13 @@ class MusicEnvironment constructor(
         }
     }
 
+    fun seekTo(duration: Long) {
+        exoPlayer.seekTo(duration)
+    }
+
     fun getPlayingState() = _isPlaying
+
+    fun getDuration() = _duration
 
     fun getSongs() = _songs
 

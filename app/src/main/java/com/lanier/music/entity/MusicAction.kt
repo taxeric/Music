@@ -8,6 +8,7 @@ sealed interface MusicAction {
 
     data class Play(val song: Song) : MusicAction
     data class UpdateSongs(val songs: List<Song>): MusicAction
+    data class SeekTo(val duration: Long): MusicAction
     object Pause: MusicAction
     object Resume: MusicAction
     object Stop: MusicAction

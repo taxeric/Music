@@ -26,6 +26,11 @@ class MusicVM (private val environment: MusicEnvironment): ViewModel() {
             }
         }
         viewModelScope.launch {
+            environment.getDuration().collect {
+                _state.emit(_state.value.copy(curDuration = it))
+            }
+        }
+        viewModelScope.launch {
             environment.getSongs().collect {
                 _state.emit(_state.value.copy(songs = it))
             }
@@ -42,6 +47,11 @@ class MusicVM (private val environment: MusicEnvironment): ViewModel() {
             MusicAction.Pause -> {
                 viewModelScope.launch {
                     environment.pause()
+                }
+            }
+            is MusicAction.SeekTo -> {
+                viewModelScope.launch {
+                    environment.seekTo(action.duration)
                 }
             }
             is MusicAction.Play -> {

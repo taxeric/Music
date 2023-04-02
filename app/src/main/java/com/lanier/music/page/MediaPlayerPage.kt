@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,6 +19,7 @@ import com.lanier.music.entity.Song
 import com.lanier.music.entity.SongController
 import com.lanier.music.vm.MusicVM
 import java.io.File
+import kotlin.math.roundToLong
 
 /**
  * Create by Eric
@@ -108,10 +110,31 @@ private fun MusicItem(
 @Composable
 private fun CurPlay() {
     val musicState = LocalMusicState.current
-    Column() {
+    Column {
         Text(text = "cur >> ${musicState.curPlaySong.name}")
         Text(text = "size >> ${musicState.songs.size}")
     }
+}
+
+@Composable
+private fun SongProgress(
+    maxDuration: Long,
+    curDuration: Long,
+    onValueChange: (Float) -> Unit
+) {
+    val progress = remember(maxDuration, curDuration) {
+        if (maxDuration <= 0) {
+            0f
+        } else {
+            curDuration.toFloat() / maxDuration.toFloat()
+        }
+    }
+    Slider(
+        value = progress, 
+        onValueChange = onValueChange,
+        modifier = Modifier
+            .fillMaxWidth()
+    )
 }
 
 @Composable
@@ -119,26 +142,38 @@ private fun ControllerView() {
     val songController = LocalSongController.current
     val musicState = LocalMusicState.current
     val isPlaying = musicState.isPlaying
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        IconButton(
-            onClick = {
-                if (isPlaying) {
-                    songController?.pause()
-                } else {
-                    songController?.resume()
-                }
+        SongProgress(
+            maxDuration = musicState.curPlaySong.duration,
+            curDuration = musicState.curDuration,
+            onValueChange = {
+                songController?.seekTo(it.roundToLong())
             }
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
         ) {
-            Icon(
-                painter = painterResource(
-                    id = if (isPlaying) R.drawable.baseline_pause_24
-                    else R.drawable.baseline_play_arrow_24
-                ),
-                contentDescription = ""
-            )
+            IconButton(
+                onClick = {
+                    if (isPlaying) {
+                        songController?.pause()
+                    } else {
+                        songController?.resume()
+                    }
+                }
+            ) {
+                Icon(
+                    painter = painterResource(
+                        id = if (isPlaying) R.drawable.baseline_pause_24
+                        else R.drawable.baseline_play_arrow_24
+                    ),
+                    contentDescription = ""
+                )
+            }
         }
     }
 }

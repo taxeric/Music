@@ -9,6 +9,7 @@ import androidx.compose.runtime.compositionLocalOf
 interface SongController {
 
     fun play(song: Song)
+    fun seekTo(duration: Long)
     fun updateSongs(songs: List<Song>)
     fun pause()
     fun resume()

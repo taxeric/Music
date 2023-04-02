@@ -36,6 +36,12 @@ class MainActivity : ComponentActivity(), ServiceConnection {
             )
         }
 
+        override fun seekTo(duration: Long) {
+            vm.dispatch(
+                MusicAction.SeekTo(duration)
+            )
+        }
+
         override fun updateSongs(songs: List<Song>) {
             vm.dispatch(
                 MusicAction.UpdateSongs(songs)

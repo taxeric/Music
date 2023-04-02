@@ -9,7 +9,8 @@ import androidx.compose.runtime.compositionLocalOf
 data class MusicState(
     val songs: List<Song> = emptyList(),
     val isPlaying: Boolean = false,
-    val curPlaySong: Song = Song.default
+    val curPlaySong: Song = Song.default,
+    val curDuration: Long = 0L
 )
 
 val LocalMusicState = compositionLocalOf { MusicState() }

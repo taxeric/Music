@@ -7,8 +7,9 @@ package com.lanier.music.entity
 data class Song (
     val path: String,
     val name: String,
-    val duration: Long = 0L
 ) {
+
+    var duration: Long = 0L
 
     companion object {
         val default = Song(
