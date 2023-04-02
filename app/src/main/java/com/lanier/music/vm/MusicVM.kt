@@ -7,6 +7,7 @@ import com.lanier.music.entity.MusicAction
 import com.lanier.music.entity.MusicState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 /**
@@ -24,6 +25,16 @@ class MusicVM (private val environment: MusicEnvironment): ViewModel() {
                 _state.emit(_state.value.copy(isPlaying = it))
             }
         }
+        viewModelScope.launch {
+            environment.getSongs().collect {
+                _state.emit(_state.value.copy(songs = it))
+            }
+        }
+        viewModelScope.launch {
+            environment.getCurPlaySong().collect {
+                _state.emit(_state.value.copy(curPlaySong = it))
+            }
+        }
     }
 
     fun dispatch(action: MusicAction) {
@@ -36,13 +47,11 @@ class MusicVM (private val environment: MusicEnvironment): ViewModel() {
             is MusicAction.Play -> {
                 viewModelScope.launch {
                     environment.play(action.song)
-                    _state.emit(_state.value.copy(curPlaySong = action.song))
                 }
             }
             is MusicAction.UpdateSongs -> {
                 viewModelScope.launch {
                     environment.updateSongs(action.songs)
-                    _state.emit(_state.value.copy(songs = action.songs))
                 }
             }
             MusicAction.Resume -> {

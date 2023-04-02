@@ -27,6 +27,9 @@ class MusicEnvironment constructor(
     private val _songs = MutableStateFlow(emptyList<Song>())
     private val songs: StateFlow<List<Song>> = _songs
 
+    private val _curPlay = MutableStateFlow(Song.default)
+    private val curPlay: StateFlow<Song> = _curPlay
+
     val exoPlayer = ExoPlayer
         .Builder(context)
         .build()
@@ -60,15 +63,14 @@ class MusicEnvironment constructor(
 
     fun updateSongs(songs: List<Song>) {
         _songs.tryEmit(songs)
-
     }
 
     fun play(song: Song) {
         val uri = song.path.toUri()
-        println("play uri >> $uri")
         exoPlayer.setMediaItem(MediaItem.fromUri(uri))
         exoPlayer.prepare()
         exoPlayer.play()
+        _curPlay.tryEmit(song)
         _hasStopped.tryEmit(false)
     }
 
@@ -90,4 +92,8 @@ class MusicEnvironment constructor(
     }
 
     fun getPlayingState() = _isPlaying
+
+    fun getSongs() = _songs
+
+    fun getCurPlaySong() = _curPlay
 }
