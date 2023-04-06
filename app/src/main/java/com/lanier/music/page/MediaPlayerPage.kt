@@ -51,7 +51,7 @@ private fun MainPage() {
             musicList.clear()
             parentPath.listFiles()?.let {
                 it.forEach { f ->
-                    val song = Song(f.absolutePath, f.name)
+                    val song = Song(-1, f.absolutePath, f.name)
                     musicList.add(song)
                 }
             }
@@ -146,13 +146,13 @@ private fun ControllerView() {
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        SongProgress(
+        /*SongProgress(
             maxDuration = musicState.curPlaySong.duration,
             curDuration = musicState.curDuration,
             onValueChange = {
                 songController?.seekTo(it.roundToLong())
             }
-        )
+        )*/
         Row(
             modifier = Modifier
                 .fillMaxWidth()
