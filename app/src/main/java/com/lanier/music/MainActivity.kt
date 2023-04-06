@@ -17,13 +17,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.lanier.music.di.MusicEnvironment
 import com.lanier.music.entity.*
 import com.lanier.music.page.WrapMainPage
 import com.lanier.music.page.innerPath
 import com.lanier.music.service.MediaPlayerService
 import com.lanier.music.ui.theme.MusicTheme
+import com.lanier.music.utils.SongUtil
 import com.lanier.music.vm.MusicVM
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity(), ServiceConnection {
 
@@ -96,6 +99,17 @@ class MainActivity : ComponentActivity(), ServiceConnection {
                         vm
                     )
                 }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launch {
+            val list = SongUtil.getSong(this@MainActivity)
+            println("list >> ${list.size}")
+            if (list.isNotEmpty()) {
+                println(list[0])
             }
         }
     }
