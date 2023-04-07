@@ -69,8 +69,8 @@ class MusicEnvironment constructor(
     }
 
     fun play(song: Song) {
-        val uri = song.path.toUri()
-        exoPlayer.setMediaItem(MediaItem.fromUri(uri))
+//        val uri = song.path.toUri()
+        exoPlayer.setMediaItem(MediaItem.fromUri(song.pathUri!!))
         exoPlayer.prepare()
         exoPlayer.play()
         _curPlay.tryEmit(song)

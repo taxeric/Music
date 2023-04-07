@@ -1,6 +1,7 @@
 package com.lanier.music.utils
 
 import android.content.Context
+import android.net.Uri
 import android.provider.MediaStore
 import com.lanier.music.entity.Song
 
@@ -15,6 +16,7 @@ object SongUtil {
     ): List<Song> {
         val songs = mutableListOf<Song>()
         val audioUriExternal = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+
         val songProjection = listOf(
             MediaStore.Audio.Media._ID,
             MediaStore.Audio.Media.TITLE,
@@ -40,9 +42,12 @@ object SongUtil {
                 val title = cursor.getString(cursorIndexSongTitle)
                 val duration = cursor.getLong(cursorIndexSongDuration)
 
+                val path = Uri.withAppendedPath(audioUriExternal, "" + audioId)
+
                 val song = Song(
                     id = audioId,
                     path = "",
+                    pathUri = path,
                     name = title,
                     duration = duration,
                 )

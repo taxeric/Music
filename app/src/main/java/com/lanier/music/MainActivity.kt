@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.google.gson.Gson
 import com.lanier.music.di.MusicEnvironment
 import com.lanier.music.entity.*
 import com.lanier.music.page.WrapMainPage
@@ -26,7 +27,10 @@ import com.lanier.music.service.MediaPlayerService
 import com.lanier.music.ui.theme.MusicTheme
 import com.lanier.music.utils.SongUtil
 import com.lanier.music.vm.MusicVM
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 
 class MainActivity : ComponentActivity(), ServiceConnection {
 
@@ -107,6 +111,10 @@ class MainActivity : ComponentActivity(), ServiceConnection {
         super.onResume()
         lifecycleScope.launch {
             val list = SongUtil.getSong(this@MainActivity)
+            withContext(Dispatchers.IO) {
+                val data = Gson().toJson(list)
+                File(externalCacheDir, "abc.json").writeText(data)
+            }
             println("list >> ${list.size}")
             if (list.isNotEmpty()) {
                 println(list[0])
