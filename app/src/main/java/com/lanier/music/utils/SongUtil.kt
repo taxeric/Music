@@ -46,8 +46,7 @@ object SongUtil {
 
                 val song = Song(
                     id = audioId,
-                    path = "",
-                    pathUri = path,
+                    path = path.toString(),
                     name = title,
                     duration = duration,
                 )
