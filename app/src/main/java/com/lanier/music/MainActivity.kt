@@ -26,8 +26,10 @@ import com.lanier.music.service.MediaPlayerService
 import com.lanier.music.ui.theme.MusicTheme
 import com.lanier.music.utils.SongUtil
 import com.lanier.music.vm.MusicVM
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity(), ServiceConnection {
 
     private lateinit var vm: MusicVM
