@@ -17,6 +17,8 @@ data class Song (
     @ColumnInfo(name = "song_duration") val duration: Long = 0L,
 ) {
 
+    var isPlaying = false
+
     companion object {
         val default = Song(
             id = -1,

@@ -6,16 +6,27 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import com.lanier.music.data.Repository
 import com.lanier.music.entity.Song
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * Create by Eric
  * on 2023/4/1
  */
-class MusicEnvironment constructor(
-    context: Context
+@OptIn(DelicateCoroutinesApi::class)
+class MusicEnvironment @Inject constructor(
+    @ApplicationContext context: Context,
+    private val repository: Repository
 ) {
 
     private val _isPlaying = MutableStateFlow(false)
@@ -33,7 +44,19 @@ class MusicEnvironment constructor(
     private val _curPlay = MutableStateFlow(Song.default)
     private val curPlay: StateFlow<Song> = _curPlay
 
-    val exoPlayer = ExoPlayer
+    init {
+        GlobalScope.launch(Dispatchers.IO) {
+            repository
+                .getAllSongs()
+                .distinctUntilChanged()
+                .collect {
+                    println("environment >> ${it.size}")
+                    _songs.tryEmit(it)
+                }
+        }
+    }
+
+    private val exoPlayer = ExoPlayer
         .Builder(context)
         .build()
         .apply {
@@ -65,12 +88,12 @@ class MusicEnvironment constructor(
         }
 
     fun updateSongs(songs: List<Song>) {
-        _songs.tryEmit(songs)
+//        _songs.tryEmit(songs)
     }
 
     fun play(song: Song) {
 //        val uri = song.path.toUri()
-        exoPlayer.setMediaItem(MediaItem.fromUri(song.pathUri!!))
+        exoPlayer.setMediaItem(MediaItem.fromUri(song.path))
         exoPlayer.prepare()
         exoPlayer.play()
         _curPlay.tryEmit(song)
